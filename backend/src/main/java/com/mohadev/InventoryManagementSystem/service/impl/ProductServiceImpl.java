@@ -36,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
 //    private static final String IMAGE_DIRECTOR_FRONTEND = "/Users/dennismac/phegonDev/ims-angular/public/products/";
 
     @Override
-    public Response saveProduct(ProductDTO productDTO, MultipartFile imageFile) {
+    public Response saveProduct(ProductDTO productDTO, MultipartFile imageFile) throws IllegalAccessException {
         Category category = categoryRepository.findById(productDTO.getCategoryId())
                 .orElseThrow(()-> new NotFoundException("Category Not Found"));
 
@@ -51,8 +51,8 @@ public class ProductServiceImpl implements ProductService {
                 .build();
 
         if (imageFile != null){
-//            String imagePath = saveImageToFrontendPublicFolder(imageFile);
-//            productToSave.setImageUrl(imagePath);
+            String imagePath = saveImage(imageFile);
+            productToSave.setImageUrl(imagePath);
         }
 
         //save the product to our database

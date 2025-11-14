@@ -29,7 +29,7 @@ public class ProductController {
             @RequestParam("stockQuantity") Integer  stockQuantity,
             @RequestParam("categoryId") Long  categoryId,
             @RequestParam(value = "description", required = false) String  description
-    ) {
+    ) throws IllegalAccessException {
         ProductDTO productDTO = new ProductDTO();
 
         productDTO.setName(name);
