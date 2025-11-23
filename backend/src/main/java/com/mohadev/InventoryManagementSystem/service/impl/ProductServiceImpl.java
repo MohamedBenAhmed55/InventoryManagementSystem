@@ -33,14 +33,14 @@ public class ProductServiceImpl implements ProductService {
     private static final String IMAGE_DIRECTORY = System.getProperty("user.dir") + "/product-image/";
 
     //AFTER YOUR FROTEND IS SET UP WROTE THIS SO THE IMAGE IS SAVED IN YOUR FRONTEND PUBLIC FOLDER
-    private static final String IMAGE_DIRECTOR_FRONTEND = "C:/Users/Mohamed/Documents/springboot-angular/InventoryManagementSystem/frontend/public/products";
+    private static final String IMAGE_DIRECTOR_FRONTEND = "/Users/Mohamed/Documents/springboot-angular/InventoryManagementSystem/frontend/public/products/";
 
 
     @Override
     public Response saveProduct(ProductDTO productDTO, MultipartFile imageFile) {
 
         Category category = categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(() -> new NotFoundException("Category Not Found"));
+                .orElseThrow(()-> new NotFoundException("Category Not Found"));
 
         //map out product dto to product entity
         Product productToSave = Product.builder()
@@ -52,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
                 .category(category)
                 .build();
 
-        if (imageFile != null) {
+        if (imageFile != null){
             String imagePath = saveImageToFrontendPublicFolder(imageFile);
             productToSave.setImageUrl(imagePath);
         }
@@ -69,40 +69,40 @@ public class ProductServiceImpl implements ProductService {
     public Response updateProduct(ProductDTO productDTO, MultipartFile imageFile) {
 
         Product existingProduct = productRepository.findById(productDTO.getProductId())
-                .orElseThrow(() -> new NotFoundException("Product Not Found"));
+                .orElseThrow(()-> new NotFoundException("Product Not Found"));
 
         //check if image is associated with the update request
-        if (imageFile != null && !imageFile.isEmpty()) {
+        if (imageFile != null && !imageFile.isEmpty()){
             String imagePath = saveImageToFrontendPublicFolder(imageFile);
             existingProduct.setImageUrl(imagePath);
         }
         //Check if category is to be changed for the product
-        if (productDTO.getCategoryId() != null && productDTO.getCategoryId() > 0) {
+        if (productDTO.getCategoryId() != null && productDTO.getCategoryId() > 0){
 
             Category category = categoryRepository.findById(productDTO.getCategoryId())
-                    .orElseThrow(() -> new NotFoundException("Category Not Found"));
+                    .orElseThrow(()-> new NotFoundException("Category Not Found"));
             existingProduct.setCategory(category);
         }
 
         //check and update fiedls
 
-        if (productDTO.getName() != null && !productDTO.getName().isBlank()) {
+        if (productDTO.getName() !=null && !productDTO.getName().isBlank()){
             existingProduct.setName(productDTO.getName());
         }
 
-        if (productDTO.getSku() != null && !productDTO.getSku().isBlank()) {
+        if (productDTO.getSku() !=null && !productDTO.getSku().isBlank()){
             existingProduct.setSku(productDTO.getSku());
         }
 
-        if (productDTO.getDescription() != null && !productDTO.getDescription().isBlank()) {
+        if (productDTO.getDescription() !=null && !productDTO.getDescription().isBlank()){
             existingProduct.setDescription(productDTO.getDescription());
         }
 
-        if (productDTO.getPrice() != null && productDTO.getPrice().compareTo(BigDecimal.ZERO) >= 0) {
+        if (productDTO.getPrice() !=null && productDTO.getPrice().compareTo(BigDecimal.ZERO) >=0){
             existingProduct.setPrice(productDTO.getPrice());
         }
 
-        if (productDTO.getStockQuantity() != null && productDTO.getStockQuantity() >= 0) {
+        if (productDTO.getStockQuantity() !=null && productDTO.getStockQuantity() >=0){
             existingProduct.setStockQuantity(productDTO.getStockQuantity());
         }
 
@@ -120,8 +120,7 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> products = productRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 
-        List<ProductDTO> productDTOS = modelMapper.map(products, new TypeToken<List<ProductDTO>>() {
-        }.getType());
+        List<ProductDTO> productDTOS = modelMapper.map(products, new TypeToken<List<ProductDTO>>() {}.getType());
 
         return Response.builder()
                 .status(200)
@@ -134,7 +133,7 @@ public class ProductServiceImpl implements ProductService {
     public Response getProductById(Long id) {
 
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Product Not Found"));
+                .orElseThrow(()-> new NotFoundException("Product Not Found"));
 
 
         return Response.builder()
@@ -148,7 +147,7 @@ public class ProductServiceImpl implements ProductService {
     public Response deleteProduct(Long id) {
 
         productRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Product Not Found"));
+                .orElseThrow(()-> new NotFoundException("Product Not Found"));
 
         productRepository.deleteById(id);
 
@@ -158,43 +157,45 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
-    private String saveImageToFrontendPublicFolder(MultipartFile imageFile) {
+    private String saveImageToFrontendPublicFolder(MultipartFile imageFile){
         //validate image check
-        if (!imageFile.getContentType().startsWith("image/")) {
+        if (!imageFile.getContentType().startsWith("image/")){
             throw new IllegalArgumentException("Only image files are allowed");
         }
         //create the directory to store images if it doesn't exist
         File directory = new File(IMAGE_DIRECTOR_FRONTEND);
 
-        if (!directory.exists()) {
+        if (!directory.exists()){
             directory.mkdir();
             log.info("Directory was created");
         }
         //generate unique file name for the image
         String uniqueFileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
         //get the absolute path of the image
-        String imagePath = IMAGE_DIRECTOR_FRONTEND + uniqueFileName;
+        String imagePath = "C:" +  IMAGE_DIRECTOR_FRONTEND + uniqueFileName;
+        log.info("imagePath: {}", imagePath);
+        log.info("uniqueFileName: {}", uniqueFileName);
 
         try {
             File desctinationFile = new File(imagePath);
             imageFile.transferTo(desctinationFile); //we are transfering(writing to this folder)
 
-        } catch (Exception e) {
+        }catch (Exception e){
             throw new IllegalArgumentException("Error occurend while saving image" + e.getMessage());
         }
 
-        return "products/" + uniqueFileName;
+        return "products/"+ uniqueFileName;
     }
 
-    private String saveImage(MultipartFile imageFile) {
+    private String saveImage(MultipartFile imageFile){
         //validate image check
-        if (!imageFile.getContentType().startsWith("image/")) {
+        if (!imageFile.getContentType().startsWith("image/")){
             throw new IllegalArgumentException("Only image files are allowed");
         }
         //create the directory to store images if it doesn't exist
         File directory = new File(IMAGE_DIRECTORY);
 
-        if (!directory.exists()) {
+        if (!directory.exists()){
             directory.mkdir();
             log.info("Directory was created");
         }
@@ -207,7 +208,7 @@ public class ProductServiceImpl implements ProductService {
             File desctinationFile = new File(imagePath);
             imageFile.transferTo(desctinationFile); //we are transfering(writing to this folder)
 
-        } catch (Exception e) {
+        }catch (Exception e){
             throw new IllegalArgumentException("Error occurend while saving image" + e.getMessage());
         }
 
