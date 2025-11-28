@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../service/api.service';
 import { Router } from '@angular/router';
 import { PaginationComponent } from '../pagination/pagination.component';
@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './transaction.component.html',
   styleUrl: './transaction.component.css'
 })
-export class TransactionComponent {
+export class TransactionComponent implements OnInit {
 constructor(private apiService: ApiService, private router: Router){}
 
   transactions: any[] = [];  
